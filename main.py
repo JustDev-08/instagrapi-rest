@@ -9,8 +9,20 @@ from routers import (
     igtv, clip, album, story,
     insights
 )
+ from fastapi.middleware.cors import CORSMiddleware
+
+
+origins = ["*"]
+
  
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(auth.router)
 app.include_router(media.router)
 app.include_router(video.router)
@@ -24,23 +36,7 @@ app.include_router(insights.router)
 
 
 
-from fastapi.middleware.cors import CORSMiddleware
-
-
-origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
-    "http://localhost",
-    "http://localhost:8080",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+ 
  
 
 @app.get("/", tags=["system"], summary="Redirect to /docs")
