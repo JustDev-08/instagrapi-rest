@@ -23,7 +23,6 @@ app.include_router(story.router)
 app.include_router(insights.router)
 
 
-app = FastAPI()
 
 from fastapi.middleware.cors import CORSMiddleware
 
