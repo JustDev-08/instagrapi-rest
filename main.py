@@ -9,20 +9,27 @@ from routers import (
     igtv, clip, album, story,
     insights
 )
- from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Request
+from fastapi import Response
+from fastapi import HTTPException
 
-
-origins = ["*"]
-
- 
 app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+@app.middleware("http")
+async def cors_middleware(request: Request, call_next):
+    response = Response("Internal server error", status_code=500)
+    try:
+        response = await call_next(request)
+    except HTTPException as ex:
+        response = ex.response
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
+
+
+
+
 app.include_router(auth.router)
 app.include_router(media.router)
 app.include_router(video.router)
